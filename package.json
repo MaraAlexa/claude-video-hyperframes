@@ -1,0 +1,23 @@
+{
+  "name": "claude-video-hyperframes",
+  "version": "1.0.0",
+  "description": "let claude create videos for you with code, tokens effective",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaraAlexa/claude-video-hyperframes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaraAlexa/claude-video-hyperframes/issues"
+  },
+  "homepage": "https://github.com/MaraAlexa/claude-video-hyperframes#readme",
+  "dependencies": {
+    "hyperframes": "^0.8.174"
+  }
+}
