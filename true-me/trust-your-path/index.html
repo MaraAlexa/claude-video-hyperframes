@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; font-family: Georgia, 'DejaVu Serif', 'Liberation Serif', serif; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #1F2E3A; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #1F2E3A; }
+      .scene { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; filter: saturate(0.78); }
+      .scene > svg.bg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+      .txt { position: absolute; left: 90px; width: 900px; text-align: center; font-size: 82px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
+      .light { color: #F4EEDD; text-shadow: 0 4px 30px rgba(31,46,58,.6); }
+      .dark { color: #1F2E3A; }
+      .small { font-size: 66px; }
+      .w { display: inline-block; opacity: 0; }
+      .fog { position: absolute; width: 1500px; height: 420px; left: -210px; border-radius: 50%; opacity: 0.55;
+        background: radial-gradient(ellipse at center, rgba(231,219,200,.85) 0%, rgba(231,219,200,0) 70%); }
+      .star { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #e9d08e; }
+      .fig { position: absolute; }
+      .glow { position: absolute; border-radius: 50%; mix-blend-mode: screen;
+        background: radial-gradient(circle, rgba(248,204,99,.85) 0%, rgba(240,196,117,.35) 35%, rgba(240,196,117,0) 70%); }
+      .mote { position: absolute; border-radius: 50%; opacity: 0;
+        background: radial-gradient(circle, rgba(255,236,190,1) 0%, rgba(255,236,190,0) 70%); }
+      #bloom { position: absolute; left: 90px; top: 700px; width: 900px; height: 900px; border-radius: 50%; opacity: 0;
+        background: radial-gradient(circle, rgba(255,226,170,.95) 0%, rgba(255,226,170,0) 65%); }
+      #grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: url(grain.png); opacity: 0.17; }
+      #vig { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px;
+        background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(31,46,58,.5) 100%); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="19" data-width="1080" data-height="1920">
+
+      <!-- 1. Hook: foggy path, solitary figure, can't see where it leads -->
+      <div class="scene" id="s1">
+        <svg class="bg" viewBox="0 0 1080 1920">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2B4F5C"/><stop offset="0.45" stop-color="#5a575a"/><stop offset="0.62" stop-color="#c2b18e"/><stop offset="1" stop-color="#e7dbc8"/>
+            </linearGradient>
+          </defs>
+          <rect width="1080" height="1920" fill="url(#g1)"/>
+          <path d="M0 1200 Q 300 1120 600 1180 T 1080 1150 L1080 1920 L0 1920Z" fill="#42666a"/>
+          <path d="M0 1320 Q 260 1250 560 1310 T 1080 1290 L1080 1920 L0 1920Z" fill="#2B4F5C"/>
+          <path d="M380 1920 C 420 1700, 760 1650, 620 1480 C 520 1380, 640 1300, 585 1190 L 615 1190 C 680 1300, 600 1380, 700 1480 C 900 1650, 620 1720, 760 1920Z" fill="#c2b18e" opacity="0.8"/>
+        </svg>
+        <div class="fog" id="fogA" style="top:1000px"></div>
+        <div class="fog" id="fogB" style="top:1200px"></div>
+        <div class="fig" id="f1" style="left:480px; top:1560px; width:120px; height:260px;">
+          <svg viewBox="0 0 120 260" width="120" height="260"><g fill="#0A1B14">
+            <circle cx="62" cy="44" r="24"/><path d="M26 74 Q62 58 98 74 L108 250 L16 250Z"/><path d="M40 32 Q8 60 14 120 Q34 70 52 44Z"/></g></svg>
+        </div>
+        <div class="txt light" id="t1" style="top:340px;">You don’t have to see<br>the whole path.</div>
+      </div>
+
+      <!-- 2. Message: night walk, dawn slowly arriving -->
+      <div class="scene" id="s2" style="opacity:0">
+        <svg class="bg" viewBox="0 0 1080 1920">
+          <defs>
+            <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1F2E3A"/><stop offset="0.55" stop-color="#233a46"/><stop offset="1" stop-color="#33526f"/>
+            </linearGradient>
+            <linearGradient id="g2d" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0.35" stop-color="#33526f" stop-opacity="0"/><stop offset="0.8" stop-color="#D4826B" stop-opacity="0.9"/><stop offset="1" stop-color="#E8A84F"/>
+            </linearGradient>
+          </defs>
+          <rect width="1080" height="1920" fill="url(#g2)"/>
+          <rect id="dawn" width="1080" height="1920" fill="url(#g2d)" opacity="0"/>
+          <path d="M0 1260 Q 280 1170 600 1240 T 1080 1210 L1080 1920 L0 1920Z" fill="#3A5E5B"/>
+          <path d="M0 1380 Q 260 1310 560 1370 T 1080 1350 L1080 1920 L0 1920Z" fill="#2B4F5C"/>
+          <path d="M380 1920 C 420 1700, 760 1650, 620 1480 C 520 1380, 640 1300, 585 1200 L 615 1200 C 680 1300, 600 1380, 700 1480 C 900 1650, 620 1720, 760 1920Z" fill="#a7a58f" opacity="0.7"/>
+        </svg>
+        <div id="stars"></div>
+        <div class="fig" id="f2" style="left:565px; top:1560px; width:120px; height:260px;">
+          <svg viewBox="0 0 120 260" width="120" height="260"><g fill="#0A1B14">
+            <circle cx="62" cy="44" r="24"/><path d="M26 74 Q62 58 98 74 L108 250 L16 250Z"/><path d="M40 32 Q8 60 14 120 Q34 70 52 44Z"/></g></svg>
+        </div>
+        <div class="txt light" id="m1" style="top:330px;">It’s not about knowing<br>where it leads.</div>
+        <div class="txt light" id="m2" style="top:330px;">It’s about trusting<br>the next step.</div>
+        <div class="txt light" id="m3" style="top:330px;">It’s not about<br>being certain.</div>
+        <div class="txt light" id="m4" style="top:330px;">It’s about<br>being willing.</div>
+      </div>
+
+      <!-- 3. Metaphor: lantern lights only the next few steps -->
+      <div class="scene" id="s3" style="opacity:0">
+        <svg class="bg" viewBox="0 0 1080 1920">
+          <defs>
+            <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0A1B14"/><stop offset="0.6" stop-color="#1A3E45"/><stop offset="1" stop-color="#233a46"/>
+            </linearGradient>
+          </defs>
+          <rect width="1080" height="1920" fill="url(#g3)"/>
+          <path d="M0 1320 Q 300 1250 620 1310 T 1080 1290 L1080 1920 L0 1920Z" fill="#0A1B14"/>
+          <path d="M0 1500 Q 280 1440 600 1490 T 1080 1470 L1080 1920 L0 1920Z" fill="#244131"/>
+          <path d="M0 1600 L1080 1560 L1080 1700 L0 1740Z" fill="#c2b18e" opacity="0.28"/>
+        </svg>
+        <div class="fig" id="f3" style="left:180px; top:1440px; width:200px; height:260px;">
+          <div class="glow" id="lanternGlow" style="left:-131px; top:-124px; width:560px; height:560px; opacity:0.9;"></div>
+          <svg viewBox="0 0 200 260" width="200" height="260" style="position:absolute;left:0;top:0"><g fill="#0A1B14">
+            <circle cx="62" cy="44" r="24"/><path d="M26 74 Q62 58 98 74 L108 250 L16 250Z"/><path d="M40 32 Q8 60 14 120 Q34 70 52 44Z"/>
+            <path d="M92 100 L140 140" stroke="#0A1B14" stroke-width="12" stroke-linecap="round"/></g>
+            <rect x="136" y="138" width="26" height="36" rx="5" fill="#f8cc63"/>
+          </svg>
+        </div>
+        <div class="txt light small" id="t3" style="top:300px;">A lantern lights only<br>a few steps.<br>It still gets you home.</div>
+      </div>
+
+      <!-- 4. Conclusion: arrival at sunrise -->
+      <div class="scene" id="s4" style="opacity:0">
+        <svg class="bg" viewBox="0 0 1080 1920">
+          <defs>
+            <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#E5916A"/><stop offset="0.5" stop-color="#F5A67D"/><stop offset="0.85" stop-color="#EBE9DC"/>
+            </linearGradient>
+          </defs>
+          <rect width="1080" height="1920" fill="url(#g4)"/>
+          <circle id="sun" cx="540" cy="1180" r="190" fill="#E8A84F" opacity="0.9"/>
+          <path d="M0 1330 Q 300 1260 620 1320 T 1080 1300 L1080 1920 L0 1920Z" fill="#5C9D8C"/>
+          <path d="M0 1470 Q 280 1410 600 1460 T 1080 1440 L1080 1920 L0 1920Z" fill="#3D806D"/>
+          <path d="M380 1920 C 420 1760, 700 1700, 580 1520 C 520 1440, 560 1390, 540 1330 L 560 1330 C 590 1400, 600 1440, 650 1520 C 800 1700, 640 1780, 760 1920Z" fill="#EBE9DC" opacity="0.55"/>
+        </svg>
+        <div class="fig" id="f4" style="left:582px; top:1500px; width:80px; height:174px;">
+          <svg viewBox="0 0 120 260" width="80" height="174"><g fill="#1E2A3A">
+            <circle cx="62" cy="44" r="24"/><path d="M26 74 Q62 58 98 74 L108 250 L16 250Z"/><path d="M40 32 Q8 60 14 120 Q34 70 52 44Z"/></g></svg>
+        </div>
+        <div class="txt dark" id="t4" style="top:320px;">You’re not lost.<br>You’re on your way.</div>
+      </div>
+
+      <div id="motes"></div>
+      <div id="bloom"></div>
+      <div id="vig"></div>
+      <div id="grain"></div>
+      <audio id="music" src="piano.mp3" data-start="0" data-duration="19" data-volume="0.9" data-fade-in="0.8" data-fade-out="2.2"></audio>
+    </div>
+    <script>
+      // stars (night scene)
+      const stars = document.getElementById("stars");
+      const S = [];
+      for (let i = 0; i < 36; i++) {
+        const d = document.createElement("div");
+        d.className = "star";
+        d.style.left = ((i * 313) % 1040) + "px";
+        d.style.top = ((i * 191) % 950) + "px";
+        d.style.opacity = 0.35 + ((i * 7) % 5) / 10;
+        stars.appendChild(d); S.push(d);
+      }
+      // motes
+      const motes = document.getElementById("motes");
+      const M = [];
+      for (let i = 0; i < 24; i++) {
+        const d = document.createElement("div");
+        d.className = "mote";
+        const sz = 10 + (i % 4) * 7;
+        d.style.width = d.style.height = sz + "px";
+        d.style.left = ((i * 197) % 1000) + 40 + "px";
+        d.style.top = 1000 + ((i * 89) % 800) + "px";
+        motes.appendChild(d); M.push(d);
+      }
+      // word-by-word text
+      document.querySelectorAll(".txt").forEach((el) => {
+        el.innerHTML = el.innerHTML.split("<br>").map((line) =>
+          line.trim().split(/\s+/).map((w) => '<span class="w">' + w + "</span>").join(" ")).join("<br>");
+      });
+      const words = (sel) => Array.from(document.querySelectorAll(sel + " .w"));
+
+      const tl = gsap.timeline({ paused: true });
+      const reveal = (sel, t, gap) => words(sel).forEach((w, i) =>
+        tl.fromTo(w, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, t + i * gap));
+      const hide = (sel, t) => tl.to(sel + " .w", { opacity: 0, duration: 0.35, ease: "none" }, t);
+      const cross = (el, t, d) => tl.to(el, { opacity: 1, duration: d, ease: "none" }, t);
+
+      // slow push-in on every scene
+      [["#s1", 0, 3.8], ["#s2", 3, 8.4], ["#s3", 11, 4.7], ["#s4", 15.3, 3.7]].forEach(([s, t, d]) =>
+        tl.fromTo(s, { scale: 1 }, { scale: 1.07, duration: d, ease: "none", transformOrigin: "50% 62%" }, t));
+
+      // 1 — HOOK (0–3s): fog drifts, figure small and unsure
+      tl.fromTo("#fogA", { x: -90 }, { x: 90, duration: 3.8, ease: "none" }, 0);
+      tl.fromTo("#fogB", { x: 90 }, { x: -90, duration: 3.8, ease: "none" }, 0);
+      tl.fromTo("#f1", { y: 0 }, { y: -6, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: 2 }, 0);
+      reveal("#t1", 0.3, 0.28);
+      hide("#t1", 2.85);
+
+      // 2 — MESSAGE (3–11s): walking through the night, dawn creeping in
+      cross("#s2", 3.0, 0.9);
+      S.forEach((d, i) => tl.to(d, { opacity: 0.15, duration: 1.1 + (i % 3) * 0.3, yoyo: true, repeat: 5, ease: "sine.inOut" }, 3 + (i % 5) * 0.2));
+      tl.fromTo("#f2", { x: 0, y: 0, scale: 1 }, { x: 20, y: -330, scale: 0.52, duration: 8.2, ease: "sine.inOut", transformOrigin: "50% 100%" }, 3.0);
+      tl.to("#dawn", { opacity: 0.6, duration: 4.2, ease: "none" }, 7.0);
+      reveal("#m1", 3.5, 0.22); hide("#m1", 5.3);
+      reveal("#m2", 5.5, 0.22); hide("#m2", 7.4);
+      reveal("#m3", 7.6, 0.22); hide("#m3", 9.3);
+      reveal("#m4", 9.5, 0.26); hide("#m4", 11.0);
+
+      // 3 — METAPHOR (11–15s): the lantern only lights the next few steps
+      cross("#s3", 11.0, 0.8);
+      tl.fromTo("#f3", { x: 0 }, { x: 330, duration: 4.4, ease: "none" }, 11.0);
+      tl.fromTo("#f3", { y: 0 }, { y: -8, duration: 0.55, ease: "sine.inOut", yoyo: true, repeat: 7 }, 11.0);
+      tl.fromTo("#lanternGlow", { scale: 0.92 }, { scale: 1.06, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 9 }, 11.0);
+      reveal("#t3", 11.4, 0.2);
+      hide("#t3", 15.1);
+
+      // 4 — CONCLUSION (15–19s): sunrise, light floods in
+      cross("#s4", 15.3, 0.7);
+      tl.fromTo("#sun", { attr: { cy: 1260 } }, { attr: { cy: 1180 }, duration: 3.4, ease: "power1.out" }, 15.3);
+      tl.fromTo("#bloom", { opacity: 0, scale: 0.6 }, { opacity: 0.8, scale: 1.4, duration: 2.4, ease: "power2.out" }, 15.6);
+      reveal("#t4", 15.8, 0.3);
+
+      // warm motes drift upward as hope builds (from the first hint of dawn)
+      M.forEach((m, i) => {
+        const t0 = 7.0 + (i % 8) * 1.05;
+        tl.fromTo(m, { y: 0, opacity: 0 }, { y: -560 - (i % 5) * 70, opacity: 0.8, duration: 3.0, ease: "sine.out" }, t0);
+        tl.to(m, { opacity: 0, duration: 1.0, ease: "none" }, t0 + 2.0);
+      });
+      // gentle heartbeat in the vignette
+      tl.fromTo("#vig", { opacity: 1 }, { opacity: 0.8, duration: 0.8, yoyo: true, repeat: 22, ease: "sine.inOut" }, 0);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
