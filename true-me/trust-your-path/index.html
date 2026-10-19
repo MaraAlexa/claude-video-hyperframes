@@ -85,13 +85,13 @@
       <div id="vig"></div>
       <div id="grain"></div>
       <audio id="music" src="audio/music_bright.mp3" data-start="0" data-duration="19" data-volume="0.42" data-fade-in="0.8" data-fade-out="2.2"></audio>
-      <audio id="vo_t1" src="audio/vo_t1.wav" data-start="0.25" data-duration="3.82" data-volume="1"></audio>
-      <audio id="vo_m1" src="audio/vo_m1.wav" data-start="3.15" data-duration="3.78" data-volume="1"></audio>
-      <audio id="vo_m2" src="audio/vo_m2.wav" data-start="5.75" data-duration="3.88" data-volume="1"></audio>
-      <audio id="vo_m3" src="audio/vo_m3.wav" data-start="8.45" data-duration="3.31" data-volume="1"></audio>
-      <audio id="vo_m4" src="audio/vo_m4.wav" data-start="10.55" data-duration="3.03" data-volume="1"></audio>
-      <audio id="vo_t3" src="audio/vo_t3.wav" data-start="12.45" data-duration="4.44" data-volume="1"></audio>
-      <audio id="vo_t4" src="audio/vo_t4.wav" data-start="15.85" data-duration="3.15" data-volume="1" data-fade-out="0.5"></audio>
+      <audio id="vo_t1" src="audio/me_t1.wav" data-start="0.3" data-duration="3.77" data-volume="1"></audio>
+      <audio id="vo_m1" src="audio/me_m1.wav" data-start="2.95" data-duration="3.84" data-volume="1"></audio>
+      <audio id="vo_m2" src="audio/me_m2.wav" data-start="5.67" data-duration="4.01" data-volume="1"></audio>
+      <audio id="vo_m3" src="audio/me_m3.wav" data-start="8.56" data-duration="3.22" data-volume="1"></audio>
+      <audio id="vo_m4" src="audio/me_m4.wav" data-start="10.66" data-duration="2.96" data-volume="1"></audio>
+      <audio id="vo_t3" src="audio/me_t3.wav" data-start="12.5" data-duration="4.6" data-volume="1"></audio>
+      <audio id="vo_t4" src="audio/me_t4.wav" data-start="15.98" data-duration="3.02" data-volume="1" data-fade-out="0.4"></audio>
     </div>
     <script>
       // ---- build the world (deterministic) ----
@@ -164,7 +164,7 @@
       const words = (sel) => Array.from(document.querySelectorAll(sel + " .w"));
 
       const tl = gsap.timeline({ paused: true });
-      const V = {"t1": {"s": 0.3, "d": 2.37}, "m1": {"s": 3.2, "d": 2.33}, "m2": {"s": 5.8, "d": 2.43}, "m3": {"s": 8.5, "d": 1.86}, "m4": {"s": 10.6, "d": 1.58}, "t3": {"s": 12.5, "d": 2.99}, "t4": {"s": 15.9, "d": 2.09}};
+      const V = {"t1": {"s": 0.3, "d": 2.37, "parts": [[8, 0.08, 2.17]]}, "m1": {"s": 2.95, "d": 2.44, "parts": [[4, 0.08, 1.18], [3, 1.81, 0.51]]}, "m2": {"s": 5.67, "d": 2.61, "parts": [[3, 0.08, 1.18], [3, 1.75, 0.74]]}, "m3": {"s": 8.56, "d": 1.82, "parts": [[5, 0.08, 1.62]]}, "m4": {"s": 10.66, "d": 1.56, "parts": [[4, 0.08, 1.36]]}, "t3": {"s": 12.5, "d": 3.2, "parts": [[4, 0.08, 1.69], [4, 2.32, 0.76]]}, "t4": {"s": 15.98, "d": 2.27, "parts": [[3, 0.08, 0.6], [4, 1.23, 0.92]]}};
       const reveal = (sel, t, gap) => words(sel).forEach((w, i) =>
         tl.fromTo(w, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, t + i * gap));
       const hide = (sel, t) => tl.to(sel + " .w", { opacity: 0, duration: 0.35, ease: "none" }, t);
@@ -210,9 +210,17 @@
       tl.fromTo("#pony", { rotation: -5 }, { rotation: 6, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 17, transformOrigin: "72px 30px" }, 0);
 
       // ---- the words (timed to the voiceover) ----
-      const R = (id, n) => { reveal("#" + id, V[id].s, (V[id].d - 0.5) / n); hide("#" + id, V[id].s + V[id].d + 0.15); };
-      R("t1", 7); R("m1", 7); R("m2", 6); R("m3", 5); R("m4", 4); R("t3", 8);
-      reveal("#t4", V.t4.s, (V.t4.d - 0.5) / 7);
+      const Rp = (id) => {
+        const ws = words("#" + id); let wi = 0;
+        V[id].parts.forEach(([n, rs, pd]) => {
+          for (let i = 0; i < n; i++) {
+            const w = ws[wi++]; if (!w) break;
+            tl.fromTo(w, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, Math.max(0, V[id].s + rs + (i * pd) / n - 0.1));
+          }
+        });
+        if (id !== "t4") hide("#" + id, V[id].s + V[id].d + 0.1);
+      };
+      ["t1", "m1", "m2", "m3", "m4", "t3", "t4"].forEach(Rp);
 
       // ---- light motes rise as hope builds; gentle heartbeat in the edges ----
       M.forEach((m, i) => {
