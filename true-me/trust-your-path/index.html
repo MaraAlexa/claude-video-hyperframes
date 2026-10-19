@@ -60,8 +60,16 @@
         <div class="fog" id="fogB" style="top:960px"></div>
         <div id="stones" class="abs" style="left:0;top:0;"></div>
         <div id="fig"><div id="figIn">
-          <svg viewBox="0 0 120 260" width="120" height="260"><g fill="#1E2A3A">
-            <circle cx="62" cy="44" r="24"/><path d="M26 74 Q62 58 98 74 L108 250 L16 250Z"/><path d="M40 32 Q8 60 14 120 Q34 70 52 44Z"/></g></svg>
+          <svg viewBox="0 0 120 260" width="120" height="260">
+            <rect x="44" y="236" width="13" height="22" rx="6" fill="#2b2131"/><rect x="63" y="236" width="13" height="22" rx="6" fill="#2b2131"/>
+            <rect x="53" y="50" width="14" height="22" rx="6" fill="#B08A6B"/>
+            <path d="M60 64 C 40 64 28 72 26 92 L 22 152 C 20 180 16 212 10 242 C 40 249 80 249 110 242 C 104 212 100 180 98 152 L 94 92 C 92 72 80 64 60 64Z" fill="#C49E7C"/>
+            <path d="M28 82 C 19 112 21 152 25 186 L 38 188 C 36 152 36 114 41 84Z" fill="#B08A6B"/>
+            <path d="M92 82 C 101 112 99 152 95 186 L 82 188 C 84 152 84 114 79 84Z" fill="#B08A6B"/>
+            <path d="M60 140 L 60 242" stroke="#B08A6B" stroke-width="2" opacity="0.6"/>
+            <circle cx="60" cy="36" r="23" fill="#2D2D2D"/>
+            <path id="pony" d="M72 24 C 100 18 108 50 90 78 C 96 56 90 42 74 38Z" fill="#2D2D2D"/>
+          </svg>
         </div></div>
       </div>
 
@@ -76,7 +84,14 @@
       <div id="motes"></div>
       <div id="vig"></div>
       <div id="grain"></div>
-      <audio id="music" src="piano.mp3" data-start="0" data-duration="19" data-volume="0.9" data-fade-in="0.8" data-fade-out="2.2"></audio>
+      <audio id="music" src="audio/music_bright.mp3" data-start="0" data-duration="19" data-volume="0.42" data-fade-in="0.8" data-fade-out="2.2"></audio>
+      <audio id="vo_t1" src="audio/vo_t1.wav" data-start="0.25" data-duration="1.76" data-volume="1"></audio>
+      <audio id="vo_m1" src="audio/vo_m1.wav" data-start="3.45" data-duration="1.93" data-volume="1"></audio>
+      <audio id="vo_m2" src="audio/vo_m2.wav" data-start="5.45" data-duration="1.78" data-volume="1"></audio>
+      <audio id="vo_m3" src="audio/vo_m3.wav" data-start="7.55" data-duration="1.55" data-volume="1"></audio>
+      <audio id="vo_m4" src="audio/vo_m4.wav" data-start="9.45" data-duration="1.4" data-volume="1"></audio>
+      <audio id="vo_t3" src="audio/vo_t3.wav" data-start="11.35" data-duration="2.6" data-volume="1"></audio>
+      <audio id="vo_t4" src="audio/vo_t4.wav" data-start="15.75" data-duration="1.93" data-volume="1"></audio>
     </div>
     <script>
       // ---- build the world (deterministic) ----
@@ -186,17 +201,21 @@
       P.forEach((q, k) => {
         if (k === 0) return;
         tl.to("#fig", { x: q.x - P[0].x, y: q.y - P[0].y, scale: q.rx / P[0].rx, duration: 1.0, ease: "power2.inOut", transformOrigin: "50% 100%" }, stepAt[k]);
-        tl.fromTo("#figIn", { y: 0 }, { y: -16, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, stepAt[k]);
+        tl.fromTo("#figIn", { y: 0 }, { y: -9, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, stepAt[k]);
       });
 
-      // ---- the words ----
-      reveal("#t1", 0.3, 0.28);  hide("#t1", 2.85);
-      reveal("#m1", 3.5, 0.22);  hide("#m1", 5.3);
-      reveal("#m2", 5.5, 0.22);  hide("#m2", 7.3);
-      reveal("#m3", 7.6, 0.22);  hide("#m3", 9.3);
-      reveal("#m4", 9.5, 0.26);  hide("#m4", 11.0);
-      reveal("#t3", 11.4, 0.26); hide("#t3", 15.1);
-      reveal("#t4", 15.8, 0.3);
+      tl.fromTo("#figIn", { rotation: -1.4 }, { rotation: 1.4, duration: 1.3, ease: "sine.inOut", yoyo: true, repeat: 14, transformOrigin: "50% 100%" }, 0);
+
+      tl.fromTo("#pony", { rotation: -5 }, { rotation: 6, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 17, transformOrigin: "72px 30px" }, 0);
+
+      // ---- the words (timed to the voiceover) ----
+      reveal("#t1", 0.3, 0.25);  hide("#t1", 2.85);
+      reveal("#m1", 3.5, 0.26);  hide("#m1", 5.45);
+      reveal("#m2", 5.5, 0.29);  hide("#m2", 7.3);
+      reveal("#m3", 7.6, 0.3);  hide("#m3", 9.3);
+      reveal("#m4", 9.5, 0.33);  hide("#m4", 11.0);
+      reveal("#t3", 11.4, 0.31); hide("#t3", 15.1);
+      reveal("#t4", 15.8, 0.27);
 
       // ---- light motes rise as hope builds; gentle heartbeat in the edges ----
       M.forEach((m, i) => {
