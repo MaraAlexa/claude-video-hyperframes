@@ -10,12 +10,18 @@
       #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #1F2E3A; }
       .scene { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; filter: saturate(0.78); }
       .scene svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
-      .txt { position: absolute; left: 90px; width: 900px; text-align: center; font-size: 84px; line-height: 1.18;
+    .txt { position: absolute; left: 90px; width: 900px; text-align: center; font-size: 84px; line-height: 1.18;
         font-weight: 700; letter-spacing: -0.01em; opacity: 0; }
       .light { color: #F4EEDD; text-shadow: 0 4px 30px rgba(31,46,58,.55); }
       .dark { color: #1F2E3A; }
       .small { font-size: 64px; font-style: italic; font-weight: 400; }
       .leaf { position: absolute; width: 34px; height: 20px; border-radius: 50% 0 50% 0; opacity: 0; }
+      .w { display: inline-block; opacity: 0; }
+      .rain { position: absolute; width: 3px; height: 110px; background: linear-gradient(#c7d6e0, rgba(199,214,224,0)); opacity: 0; transform: rotate(8deg); }
+      .mote { position: absolute; width: 18px; height: 18px; border-radius: 50%; opacity: 0;
+        background: radial-gradient(circle, rgba(255,236,190,1) 0%, rgba(255,236,190,0) 70%); }
+      #bloom { position: absolute; left: 140px; top: 760px; width: 800px; height: 800px; border-radius: 50%; opacity: 0;
+        background: radial-gradient(circle, rgba(255,226,170,.95) 0%, rgba(255,226,170,0) 65%); }
       #grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: url(grain.png); opacity: 0.17; }
       #vig { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px;
         background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(31,46,58,.5) 100%); }
@@ -38,13 +44,16 @@
           <ellipse cx="720" cy="1000" rx="360" ry="34" fill="#e7dbc8" opacity="0.08"/>
           <path d="M0 1500 Q 270 1400 540 1470 T 1080 1430 L1080 1920 L0 1920Z" fill="#244131"/>
           <path d="M0 1620 Q 300 1540 600 1600 T 1080 1580 L1080 1920 L0 1920Z" fill="#0A1B14"/>
+          <rect x="868" y="1432" width="26" height="30" fill="#F0C475"/>
+          <circle cx="881" cy="1447" r="70" fill="#F0C475" opacity="0.18"/>
+          <circle cx="881" cy="1447" r="150" fill="#F0C475" opacity="0.07"/>
           <g transform="translate(300 1440)" fill="#0A1B14">
-            <circle cx="0" cy="-118" r="22"/>
-            <path d="M-26 -92 Q 0 -102 26 -92 L 34 10 L -34 10Z"/>
-            <path d="M-20 -128 Q -52 -100 -62 -52 Q -34 -86 -14 -104Z"/>
+            <circle cx="10" cy="-100" r="22"/>
+            <path d="M-24 -78 Q 4 -90 28 -80 L 34 10 L -34 10Z"/>
+            <path d="M-6 -118 Q -48 -96 -58 -40 Q -30 -78 -2 -96Z"/>
           </g>
         </svg>
-        <div class="txt light" id="tA" style="top:560px;">Letting go<br>isn’t losing.</div>
+        <div class="txt light" id="tA" style="top:560px;">It hurt<br>because you loved.</div>
       </div>
 
       <!-- Scene B: warm dusk, walking away -->
@@ -66,8 +75,8 @@
             <path d="M-22 -140 Q -60 -108 -70 -52 Q -38 -92 -16 -116Z"/>
           </g>
         </svg>
-        <div class="txt dark" id="tB" style="top:300px;">It’s not giving up.</div>
-        <div class="txt dark" id="tB2" style="top:520px;">It’s growing up.</div>
+        <div class="txt dark" id="tB" style="top:300px;">You didn’t fail.</div>
+        <div class="txt dark" id="tB2" style="top:520px;">You were brave.</div>
       </div>
 
       <!-- Scene C: tree shedding leaves -->
@@ -91,7 +100,7 @@
           <g fill="#5C9D8C" opacity="0.7"><circle cx="500" cy="960" r="70"/><circle cx="640" cy="1000" r="60"/></g>
         </svg>
         <div id="leaves"></div>
-        <div class="txt dark small" id="tC" style="top:230px;">Trees don’t apologize<br>for shedding leaves.</div>
+        <div class="txt dark small" id="tC" style="top:230px;">A tree loses its leaves,<br>never itself.</div>
       </div>
 
       <!-- Scene D: new growth at sunrise -->
@@ -112,9 +121,12 @@
             <path d="M540 1420 Q 640 1400 665 1330 Q 560 1340 540 1420Z" fill="#5C9D8C"/>
           </g>
         </svg>
-        <div class="txt dark" id="tD" style="top:330px;">Let go.<br>Watch what grows.</div>
+        <div class="txt dark" id="tD" style="top:330px;">Let go.<br>You’re still whole.</div>
       </div>
 
+      <div id="rain"></div>
+      <div id="motes"></div>
+      <div id="bloom"></div>
       <div id="vig"></div>
       <div id="grain"></div>
     </div>
@@ -132,30 +144,84 @@
         L.push(d);
       }
 
-      const tl = gsap.timeline({ paused: true });
-      const fade = (el, t) => tl.fromTo(el, { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, t);
-      const out = (el, t) => tl.to(el, { opacity: 0, duration: 0.3, ease: "none" }, t);
-      const cross = (el, t) => tl.to(el, { opacity: 1, duration: 0.4, ease: "none" }, t);
-
-      // slow push-in on every scene
-      [["#sA", 0, 2.4], ["#sB", 2, 2.6], ["#sC", 4.2, 2.6], ["#sD", 6.4, 1.6]].forEach(([s, t, d]) =>
-        tl.fromTo(s, { scale: 1 }, { scale: 1.06, duration: d, ease: "none", transformOrigin: "50% 50%" }, t));
-
-      // A — hook
-      fade("#tA", 0.2); out("#tA", 1.8);
-      // B — message
-      cross("#sB", 2.0); fade("#tB", 2.3); fade("#tB2", 3.0); out("#tB", 4.0); out("#tB2", 4.0);
-      // C — metaphor
-      cross("#sC", 4.2); fade("#tC", 4.5);
-      L.forEach((l, i) => {
-        tl.set(l, { opacity: 1 }, 4.6 + i * 0.12);
-        tl.to(l, { y: 620 + (i % 4) * 40, x: (i % 2 ? 90 : -110) + i * 6, rotation: 240 + i * 35, duration: 1.9, ease: "power1.in" }, 4.6 + i * 0.12);
-        tl.to(l, { opacity: 0, duration: 0.3 }, 6.2 + i * 0.01);
+      // word-by-word text
+      document.querySelectorAll(".txt").forEach((el) => {
+        el.innerHTML = el.innerHTML.split("<br>").map((line) =>
+          line.trim().split(/\s+/).map((w) => '<span class="w">' + w + "</span>").join(" ")).join("<br>");
       });
-      out("#tC", 6.2);
-      // D — conclusion
-      cross("#sD", 6.4); fade("#tD", 6.7);
+      const words = (sel) => Array.from(document.querySelectorAll(sel + " .w"));
+
+      const rain = document.getElementById("rain");
+      const R = [];
+      for (let i = 0; i < 30; i++) {
+        const d = document.createElement("div");
+        d.className = "rain";
+        d.style.left = ((i * 83) % 1100) - 20 + "px";
+        d.style.top = "-140px";
+        rain.appendChild(d); R.push(d);
+      }
+      const motes = document.getElementById("motes");
+      const M = [];
+      for (let i = 0; i < 18; i++) {
+        const d = document.createElement("div");
+        d.className = "mote";
+        d.style.left = ((i * 211) % 1000) + 40 + "px";
+        d.style.top = 1000 + ((i * 97) % 700) + "px";
+        const sz = 10 + (i % 4) * 7; d.style.width = d.style.height = sz + "px";
+        motes.appendChild(d); M.push(d);
+      }
+
+      const tl = gsap.timeline({ paused: true });
+      const reveal = (sel, t, gap) => words(sel).forEach((w, i) =>
+        tl.fromTo(w, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, t + i * gap));
+      const hide = (sel, t) => tl.to(sel, { opacity: 0, duration: 0.35, ease: "none" }, t);
+      const cross = (el, t, d) => tl.to(el, { opacity: 1, duration: d || 0.6, ease: "none" }, t);
+      tl.set([".txt"], { opacity: 1 }, 0);
+
+      // slow push-in on every scene (feels like leaning in)
+      [["#sA", 0, 2.6], ["#sB", 2, 2.6], ["#sC", 4.2, 2.6], ["#sD", 6.4, 1.6]].forEach(([s, t, d]) =>
+        tl.fromTo(s, { scale: 1 }, { scale: 1.08, duration: d, ease: "none", transformOrigin: "50% 62%" }, t));
+
+      // A — pain: cold rain, bowed figure, distant warm window
+      R.forEach((r, i) => {
+        const t0 = (i % 6) * 0.13;
+        tl.fromTo(r, { y: 0, opacity: 0.55 }, { y: 2100, opacity: 0.55, duration: 0.85, ease: "none", repeat: 3 }, t0);
+        tl.to(r, { opacity: 0, duration: 0.8, ease: "none" }, 2.5 + (i % 6) * 0.08);
+      });
+      tl.fromTo("#vig", { opacity: 1 }, { opacity: 0.75, duration: 0.7, yoyo: true, repeat: 3, ease: "sine.inOut" }, 0);
+      reveal("#tA", 0.25, 0.32);
+      hide("#tA", 2.0);
+
+      // B — release: rain stops, warm light arrives
+      cross("#sB", 2.1, 0.9);
+      tl.fromTo("#bloom", { opacity: 0, scale: 0.6 }, { opacity: 0.45, scale: 1.1, duration: 1.6, ease: "power1.out" }, 2.4);
+      reveal("#tB", 2.6, 0.3);
+      reveal("#tB2", 3.3, 0.3);
+      hide("#tB", 4.0); hide("#tB2", 4.0);
+
+      // C — the metaphor, golden leaves drifting softly
+      cross("#sC", 4.1, 0.6);
+      tl.to("#bloom", { opacity: 0.2, duration: 0.8 }, 4.1);
+      reveal("#tC", 4.4, 0.26);
+      L.forEach((l, i) => {
+        tl.set(l, { opacity: 1 }, 4.6 + i * 0.1);
+        tl.to(l, { y: 640 + (i % 4) * 40, x: (i % 2 ? 100 : -120) + i * 6, rotation: 200 + i * 30, duration: 2.0, ease: "sine.inOut" }, 4.6 + i * 0.1);
+        tl.to(l, { opacity: 0, duration: 0.35 }, 6.3 + i * 0.01);
+      });
+      hide("#tC", 6.2);
+
+      // D — relief: light floods in, new growth
+      cross("#sD", 6.3, 0.6);
+      tl.to("#bloom", { opacity: 0.85, scale: 1.5, duration: 1.4, ease: "power2.out" }, 6.4);
+      reveal("#tD", 6.6, 0.28);
       tl.fromTo("#sprout", { scaleY: 0.05, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 1.2, ease: "back.out(1.4)" }, 6.5);
+
+      // warm glowing motes drift upward from the moment the rain stops
+      M.forEach((m, i) => {
+        const t0 = 2.6 + (i % 6) * 0.35;
+        tl.fromTo(m, { y: 0, opacity: 0 }, { y: -520 - (i % 5) * 70, opacity: 0.8, duration: 2.8, ease: "sine.out" }, t0);
+        tl.to(m, { opacity: 0, duration: 1.0, ease: "none" }, t0 + 1.8);
+      });
 
       window.__timelines["main"] = tl;
       tl.seek(0);
