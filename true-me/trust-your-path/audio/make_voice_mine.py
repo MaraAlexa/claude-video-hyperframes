@@ -15,8 +15,36 @@ LINES = {
  "t3": [(18.56, 20.25), (20.82, 21.58)],
  "t4": [(22.43, 23.03), (24.17, 25.09)],
 }
+
+def real_edges(a, b, prev_end=None, next_start=None):
+    """Quiet consonants (soft final 's', 't', 'th') fall under the silence threshold; grow the phrase until the true floor."""
+    win = int(.03 * SR)
+    def level(t): 
+        i = int(t * SR); f = x[i:i + win]
+        return 20 * np.log10(np.sqrt((f ** 2).mean()) + 1e-9) if len(f) else -120
+    FLOOR = -76
+    lo = prev_end + 0.12 if prev_end is not None else 0.0
+    hi = next_start - 0.12 if next_start is not None else len(x) / SR
+    a2 = a
+    while a2 - 0.01 > lo and a - a2 < 0.25 and level(a2 - 0.03) > FLOOR: a2 -= 0.01
+    b2 = b
+    quiet = 0
+    while b2 + 0.01 < hi and b2 - b < 0.55:
+        b2 += 0.01
+        quiet = quiet + 1 if level(b2) < FLOOR else 0
+        if quiet >= 3: b2 -= 0.03; break
+    return round(a2, 2), round(b2, 2)
+
+allsegs = [sg for segs in LINES.values() for sg in segs]
+ext = {}
+for i, (a, b) in enumerate(allsegs):
+    ext[(a, b)] = real_edges(a, b, allsegs[i - 1][1] if i else None, allsegs[i + 1][0] if i + 1 < len(allsegs) else None)
+ORIG_END = {ext[sg]: sg[1] for sg in allsegs}
+LINES = {k: [ext[sg] for sg in segs] for k, segs in LINES.items()}
+print({k: v for k, v in LINES.items()}, file=__import__("sys").stderr)
+
 WORDS = {"t1": [8], "m1": [4, 3], "m2": [3, 3], "m3": [5], "m4": [4], "t3": [4, 4], "t4": [3, 4]}
-PAD_IN, PAD_OUT, PAUSE_CAP = 0.08, 0.12, 0.38
+PAD_IN, PAD_OUT, PAUSE_CAP = 0.06, 0.04, 0.3
 
 rng = np.random.default_rng(5)
 t = np.arange(int(SR * 1.5)) / SR
@@ -34,6 +62,13 @@ for k, segs in LINES.items():
     for i, (a, b) in enumerate(segs):
         lead = PAD_IN if i == 0 else 0.0
         seg = x[int((a - (PAD_IN if i == 0 else 0.05)) * SR): int((b + PAD_OUT) * SR)].copy()
+        # lift the quiet word-ending (soft 's', 't', 'th') that sat below the detection threshold by ~10 dB
+        t_start = a - (PAD_IN if i == 0 else 0.05)
+        k0 = int((ORIG_END[(a, b)] - 0.03 - t_start) * SR)
+        if 0 < k0 < len(seg):
+            g = np.ones(len(seg)); ramp = int(.04 * SR)
+            g[k0:] = 10 ** (10 / 20); g[k0:k0 + ramp] = np.linspace(1, 10 ** (10 / 20), min(ramp, len(seg) - k0))
+            seg *= g
         f = int(.015 * SR); seg[:f] *= np.linspace(0, 1, f); seg[-f:] *= np.linspace(1, 0, f)
         if i > 0:
             gap = min(segs[i][0] - segs[i - 1][1] - PAD_OUT, PAUSE_CAP)
