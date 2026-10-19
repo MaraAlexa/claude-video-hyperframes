@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="es" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="gsap.min.js"></script>
+    <style>
+      /* Outfit (the site's geometric sans) served locally */
+      @font-face { font-family: 'Outfit'; font-weight: 400; src: url(fonts/outfit-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2190-2193; }
+      @font-face { font-family: 'Outfit'; font-weight: 400; src: url(fonts/outfit-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+      @font-face { font-family: 'Outfit'; font-weight: 500; src: url(fonts/outfit-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2190-2193; }
+      @font-face { font-family: 'Outfit'; font-weight: 500; src: url(fonts/outfit-latin-ext-500-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+      @font-face { font-family: 'Outfit'; font-weight: 600; src: url(fonts/outfit-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2190-2193; }
+      @font-face { font-family: 'Outfit'; font-weight: 600; src: url(fonts/outfit-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+      @font-face { font-family: 'Outfit'; font-weight: 700; src: url(fonts/outfit-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2190-2193; }
+      @font-face { font-family: 'Outfit'; font-weight: 700; src: url(fonts/outfit-latin-ext-700-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+      @font-face { font-family: 'Outfit'; font-weight: 800; src: url(fonts/outfit-latin-800-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2190-2193; }
+      @font-face { font-family: 'Outfit'; font-weight: 800; src: url(fonts/outfit-latin-ext-800-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+
+      :root { --cream: #FFF6E9; --navy: #20506A; --mint: #84C1B4; --ink: #1A2234; --grey: #757681; --coral: #F3676D; --pill: #E4E3EA; }
+      * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', 'Helvetica Neue', Arial, sans-serif; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--cream); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--cream); }
+      .abs { position: absolute; }
+      .w { display: inline-block; opacity: 0; }
+
+      /* A — dark reveal */
+      #sA { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 1;
+        background: radial-gradient(1100px 760px at 50% 54%, #1c4a5f 0%, #0f2c3e 55%, #081a26 100%); }
+      #aGlow { position: absolute; left: 510px; top: 150px; width: 900px; height: 900px; border-radius: 50%; opacity: 0;
+        background: radial-gradient(circle, rgba(132,193,180,.55) 0%, rgba(132,193,180,0) 68%); }
+      #aKicker { position: absolute; left: 0; top: 214px; width: 1920px; text-align: center; font-size: 38px; font-weight: 600;
+        letter-spacing: .55em; color: var(--mint); opacity: 0; padding-left: .55em; }
+      #aLogo { position: absolute; left: 675px; top: 330px; width: 570px; height: 465px; border-radius: 44px; overflow: hidden; opacity: 0; background: var(--cream);
+        box-shadow: 0 0 140px rgba(132,193,180,.45), 0 40px 120px rgba(0,0,0,.45); }
+      #aLogo img { width: 570px; height: 465px; display: block; }
+      #aShine { position: absolute; top: -40px; left: -200px; width: 120px; height: 560px; transform: rotate(18deg); opacity: 0;
+        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.55), rgba(255,255,255,0)); }
+      .spark { position: absolute; border-radius: 50%; opacity: 0;
+        background: radial-gradient(circle, rgba(190,235,225,1) 0%, rgba(190,235,225,0) 70%); }
+      
+      /* page (site UI) */
+      #page { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 6; transform-origin: 0 0; }
+      #nav { position: absolute; left: 0; top: 0; width: 1920px; height: 105.6px; box-shadow: 0 10px 40px rgba(32,80,106,.08); }
+      #strip { position: absolute; left: 0; top: 105px; width: 1920px; height: 57.6px; opacity: 0; }
+      .hl { position: absolute; top: 110px; height: 46px; border-radius: 23px; border: 3px solid var(--mint); background: rgba(132,193,180,.22); opacity: 0; }
+      .pill { position: absolute; background: var(--pill); color: var(--navy); border-radius: 999px; padding: 16px 36px; font-size: 28px; font-weight: 500; letter-spacing: .02em; }
+      #bPill { left: 140px; top: 210px; opacity: 0; }
+      #bHead { position: absolute; left: 140px; top: 300px; width: 1700px; font-size: 124px; line-height: 1.14; font-weight: 700; letter-spacing: -.02em; }
+      #bHead .w { padding-right: .2em; margin-right: -.2em; -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+      #bSide { position: absolute; left: 1020px; top: 760px; width: 760px; text-align: right; font-size: 42px; line-height: 1.32; font-weight: 600; color: #121212; opacity: 0; }
+      #bBlob { position: absolute; left: 1100px; top: 120px; width: 900px; height: 900px; border-radius: 50%; opacity: 0;
+        background: radial-gradient(circle, rgba(132,193,180,.32) 0%, rgba(132,193,180,0) 66%); }
+
+      .card { position: absolute; top: 300px; width: 540px; height: 560px; background: #fff; border-radius: 36px; padding: 52px 48px; opacity: 0;
+        box-shadow: 0 30px 90px rgba(32,80,106,.16), 0 4px 14px rgba(32,80,106,.06); overflow: hidden; }
+      .card .bar { position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: linear-gradient(90deg, #21526A, #84C1B4); }
+      .card .ico { width: 124px; height: 124px; border-radius: 50%; background: linear-gradient(135deg, #21526A, #84C1B4); display: flex; align-items: center; justify-content: center; }
+      .card .num { position: absolute; right: 48px; top: 56px; font-size: 40px; font-weight: 700; color: #4A9686; letter-spacing: .04em; }
+      .card h3 { margin-top: 56px; font-size: 62px; line-height: 1.1; font-weight: 700; letter-spacing: -.015em; color: var(--ink); }
+      .card h3 em { font-style: normal; background: linear-gradient(90deg, #20506A, #84C1B4); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+
+      /* D — call to action */
+      #sD { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 20; opacity: 0; overflow: hidden; background: #0f2c3e; }
+      #dWorld { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+      #dBg { position: absolute; left: -500px; top: -360px; width: 2920px; height: 1640px; object-fit: cover; }
+      #dPill { position: absolute; left: 110px; top: 120px; padding: 14px 36px; border-radius: 999px; font-size: 30px; font-weight: 500; letter-spacing: .08em;
+        color: #fff; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.35); opacity: 0; }
+      #dShadow { position: absolute; left: 130px; top: 250px; width: 820px; height: 535px; background: rgba(255,255,255,.14); transform: rotate(4deg); opacity: 0; }
+      #dPhoto { position: absolute; left: 100px; top: 270px; width: 820px; height: 535px; transform: rotate(-3deg); opacity: 0; box-shadow: 0 30px 90px rgba(0,0,0,.5); }
+      #dPhoto img { width: 820px; height: 535px; display: block; }
+      #dCard { position: absolute; left: 990px; top: 210px; width: 840px; padding: 56px 60px 60px; background: #fff; border-radius: 12px; opacity: 0; box-shadow: 0 40px 120px rgba(0,0,0,.45); }
+      #dChip { display: inline-block; background: #E6E9F7; color: var(--navy); border-radius: 999px; padding: 12px 30px; font-size: 26px; font-weight: 500; letter-spacing: .02em; }
+      #dCard h2 { margin-top: 26px; font-size: 64px; line-height: 1.1; font-weight: 700; letter-spacing: -.015em; color: var(--ink); }
+      #dCard p { margin-top: 24px; font-size: 31px; line-height: 1.45; font-weight: 400; color: var(--grey); }
+      #dBtn { position: relative; display: inline-block; margin-top: 40px; padding: 0 62px; height: 84px; line-height: 84px; border-radius: 999px; color: #fff; font-size: 36px; font-weight: 700;
+        background: linear-gradient(90deg, #21526A, #84C1B4); transform-origin: 50% 50%; }
+      #dRing { position: absolute; left: 50%; top: 50%; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; border: 4px solid var(--mint); opacity: 0; }
+      #cursor { position: absolute; left: 0; top: 0; width: 56px; height: 56px; opacity: 0; filter: drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
+
+      #end { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 30; background: var(--cream); opacity: 0; }
+      #endLogo { position: absolute; left: 722px; top: 250px; width: 475px; height: 388px; }
+      #endUrl { position: absolute; left: 0; top: 700px; width: 1920px; text-align: center; font-size: 52px; font-weight: 600; letter-spacing: .02em; color: var(--navy); }
+      #endUrl span { background: linear-gradient(90deg, #20506A, #84C1B4); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="15" data-width="1920" data-height="1080">
+
+      <!-- A: the dark reveal -->
+      <div id="sA">
+        <div id="aGlow"></div>
+        <div id="sparks"></div>
+        <div id="aKicker">PRESENTAMOS</div>
+        <div id="aLogo"><img src="assets/logo_disc.png" /><div id="aShine"></div></div>
+      </div>
+      
+      <!-- the site's own UI: nav + benefit strip, headline, three benefit cards -->
+      <div id="page">
+        <div id="bBlob"></div>
+        <img id="nav" src="assets/nav_bar.png" style="opacity:0" />
+        <img id="strip" src="assets/benefit_strip.png" />
+        <div class="hl" id="hl1" style="left:150px;width:366px"></div>
+        <div class="hl" id="hl2" style="left:686px;width:570px"></div>
+        <div class="hl" id="hl3" style="left:1462px;width:295px"></div>
+
+        <div class="pill" id="bPill">CONECTA MĀLAMA: TU AULA VIRTUAL</div>
+        <div id="bHead">La academia más cercana,<br>la academia más humana</div>
+        <div id="bSide">Preparación al Cuerpo de Ayudantes de Instituciones Penitenciarias</div>
+
+        <div class="card" id="c1" style="left:90px">
+          <div class="ico"><svg width="70" height="70" viewBox="0 0 70 70" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="14" width="58" height="42" rx="9"/><path d="M29 26 L44 35 L29 44Z" fill="#fff"/><path d="M20 63 H50"/></svg></div>
+          <div class="num">01</div>
+          <h3><em>Clases</em> en directo y diferido</h3><div class="bar"></div>
+        </div>
+        <div class="card" id="c2" style="left:690px">
+          <div class="ico"><svg width="70" height="70" viewBox="0 0 70 70" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12 H48 Q54 12 54 18 V38 Q54 44 48 44 H26 L14 54 V44 H14 Q8 44 8 38 V18 Q8 12 14 12Z"/><path d="M30 20 Q36 20 36 25 Q36 29 31 31 V34"/><circle cx="31" cy="39" r="1" fill="#fff"/><path d="M58 28 Q64 28 64 34 V48 Q64 53 59 53 V62 L50 53 H36" /></svg></div>
+          <div class="num">02</div>
+          <h3>Resolución de <em>dudas y supuestos</em> en directo</h3><div class="bar"></div>
+        </div>
+        <div class="card" id="c3" style="left:1290px">
+          <div class="ico"><svg width="70" height="70" viewBox="0 0 70 70" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="54" height="34" rx="6"/><path d="M20 34 V26 M31 34 V18 M42 34 V24 M53 34 V16"/><path d="M35 42 V56 M22 62 H48 M35 56 L24 62 M35 56 L46 62"/></svg></div>
+          <div class="num">03</div>
+          <h3><em>Seminarios</em> en directo</h3><div class="bar"></div>
+        </div>
+      </div>
+
+      <!-- D: call to action -->
+      <div id="sD">
+        <div id="dWorld">
+          <img id="dBg" src="assets/backdrop_dark.jpg" />
+          <div id="dPill">PLAZAS LIMITADAS</div>
+          <div id="dShadow"></div>
+          <div id="dPhoto"><img src="assets/photo_group_tight.png" /></div>
+          <div id="dCard">
+            <div id="dChip">MATRÍCULA ABIERTA</div>
+            <h2>¿Aún no perteneces a la familia MĀLAMA?</h2>
+            <p>Elige tu curso y comienza hoy mismo el camino que te llevará hasta tu plaza.</p>
+            <div id="dBtn">Unirme →<div id="dRing"></div></div>
+          </div>
+          <svg id="cursor" viewBox="0 0 56 56"><path d="M10 6 L10 44 L20 35 L27 50 L34 47 L27 32 L40 32Z" fill="#fff" stroke="#1A2234" stroke-width="3" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <div id="end">
+        <img id="endLogo" src="assets/logo_disc_end.png" />
+        <div id="endUrl"><span>ohanamalama.com</span></div>
+      </div>
+
+      <audio id="score" src="audio/score.mp3" data-start="0" data-duration="15" data-volume="0.5" data-fade-out="1.2"></audio>
+      <audio id="v1" src="audio/vo_v1.wav" data-start="0.45" data-duration="2.9" data-volume="1"></audio>
+      <audio id="v2" src="audio/vo_v2.wav" data-start="2.75" data-duration="3.55" data-volume="1"></audio>
+      <audio id="v3" src="audio/vo_v3.wav" data-start="5.55" data-duration="3.0" data-volume="1"></audio>
+      <audio id="v4" src="audio/vo_v4.wav" data-start="7.7" data-duration="3.1" data-volume="1"></audio>
+      <audio id="v5" src="audio/vo_v5.wav" data-start="9.9" data-duration="2.6" data-volume="1"></audio>
+      <audio id="v7" src="audio/vo_v7.wav" data-start="12" data-duration="3" data-volume="1" data-fade-out="0.3"></audio>
+    </div>
+
+    <script>
+      const lerp = (a, b, t) => a + (b - a) * t;
+      const hex = (r, g, b) => "#" + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, "0")).join("");
+      const NAVY = [32, 80, 106], MINT = [132, 193, 180];
+      const mix = (t) => hex(lerp(NAVY[0], MINT[0], t), lerp(NAVY[1], MINT[1], t), lerp(NAVY[2], MINT[2], t));
+
+      // headline: each word carries its own slice of the brand gradient (navy -> mint across the whole line)
+      const head = document.getElementById("bHead");
+      const lines = head.innerHTML.split("<br>");
+      const total = lines.join(" ").trim().split(/\s+/).length; let wi = 0;
+      head.innerHTML = lines.map((ln) => ln.trim().split(/\s+/).map((w) => {
+        const a = wi / total, b = (wi + 1) / total; wi++;
+        return '<span class="w" style="background-image:linear-gradient(90deg,' + mix(a) + ',' + mix(b) + ')">' + w + "</span>";
+      }).join(" ")).join("<br>");
+
+      // sparks in the dark opening
+      const sp = document.getElementById("sparks"), SPK = [];
+      for (let i = 0; i < 22; i++) {
+        const d = document.createElement("div"); d.className = "spark";
+        const s = 8 + (i % 4) * 5; d.style.width = d.style.height = s + "px";
+        d.style.left = 300 + ((i * 197) % 1320) + "px"; d.style.top = 520 + ((i * 131) % 460) + "px";
+        sp.appendChild(d); SPK.push(d);
+      }
+
+      const tl = gsap.timeline({ paused: true });
+      const V = { v1: 0.45, v2: 2.75, v3: 5.55, v4: 7.7, v5: 9.9, v7: 12.0 };
+      const words = (sel) => Array.from(document.querySelectorAll(sel + " .w"));
+
+      // ===== A: 0 - 2.95 — dark, glowing logo, rising swell =====
+      tl.fromTo("#aGlow", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1.15, duration: 2.4, ease: "power1.out" }, 0);
+      tl.fromTo("#aLogo", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1.0, duration: 1.0, ease: "power2.out" }, 0.35);
+      tl.fromTo("#aLogo", { y: 14 }, { y: -8, duration: 2.2, ease: "sine.inOut" }, 0.35);
+      tl.fromTo("#aKicker", { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 1.3, ease: "power2.out" }, 0.45);
+      tl.fromTo("#aShine", { opacity: 1, x: 0 }, { opacity: 1, x: 900, duration: 0.9, ease: "power1.inOut" }, 1.1);
+      tl.set("#aShine", { opacity: 0 }, 2.05);
+      SPK.forEach((d, i) => {
+        tl.fromTo(d, { y: 0, opacity: 0 }, { y: -(260 + (i % 5) * 60), opacity: 0.8, duration: 1.6, ease: "sine.out" }, 0.2 + (i % 8) * 0.17);
+        tl.to(d, { opacity: 0, duration: 0.5, ease: "none" }, 1.6 + (i % 8) * 0.17);
+      });
+      // the lights come up: logo card swells and the cream floods the frame
+            tl.to("#aKicker", { opacity: 0, duration: 0.3, ease: "none" }, 2.2);
+      tl.to("#aLogo", { scale: 11, duration: 0.65, ease: "power3.in" }, 2.3);
+      tl.to("#aLogo img", { opacity: 0, duration: 0.4, ease: "none" }, 2.3);
+      tl.set("#sA", { opacity: 0 }, 2.98);
+
+      // ===== B: 2.75 - 5.4 — the site arrives, headline =====
+      tl.fromTo("#page", { scale: 1.12, x: 960 - 1.12 * 960, y: 540 - 1.12 * 540 }, { scale: 1, x: 0, y: 0, duration: 2.4, ease: "power2.out" }, 2.9);
+      tl.fromTo("#nav", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 2.95);
+      tl.fromTo("#bBlob", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 1.6, ease: "power1.out" }, 2.95);
+      tl.fromTo("#bPill", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 3.15);
+      words("#bHead").forEach((w, i) => tl.fromTo(w, { opacity: 0, y: 70, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "power3.out" }, 3.2 + i * 0.16));
+      tl.fromTo("#bSide", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 4.5);
+      ["#bPill", "#bSide"].forEach((s) => tl.to(s, { opacity: 0, duration: 0.3, ease: "none" }, 5.22));
+      words("#bHead").forEach((w, i) => tl.to(w, { opacity: 0, y: -30, duration: 0.35, ease: "power1.in" }, 5.0 + i * 0.015));
+      tl.to("#bBlob", { opacity: 0, duration: 0.4, ease: "none" }, 5.1);
+
+      // ===== C: 5.4 - 11.7 — three big benefit cards, camera zooms through the real UI =====
+      tl.fromTo("#strip", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 5.15);
+      const cx = [360, 960, 1560], cy = 580, S = 1.32;
+      const cam = (t, d, s, x, y) => tl.to("#page", { scale: s, x: 960 - s * x, y: 540 - s * y, duration: d, ease: "power2.inOut" }, t);
+      [["#c1", "#hl1", V.v3, 0], ["#c2", "#hl2", V.v4, 1], ["#c3", "#hl3", V.v5, 2]].forEach(([c, h, t, k]) => {
+        tl.fromTo(c, { opacity: 0, y: 70, scale: 0.88 }, { opacity: 1, y: 0, scale: 1, duration: 0.65, ease: "back.out(1.5)" }, t - 0.2);
+        tl.fromTo(h, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, t - 0.1);
+        tl.to(h, { opacity: 0, duration: 0.3, ease: "none" }, t + (k === 2 ? 1.5 : 1.75));
+        cam(t - 0.1, 0.6, S, cx[k], cy);
+      });
+      cam(10.95, 0.7, 1, 960, 540);
+
+      tl.set("#page", { opacity: 0 }, 12.02);
+
+      // ===== D: 11.6 - 14.3 — call to action =====
+      tl.to("#sD", { opacity: 1, duration: 0.45, ease: "none" }, 11.55);
+      tl.fromTo("#dBg", { scale: 1.08 }, { scale: 1, duration: 3, ease: "none" }, 11.55);
+      tl.fromTo("#dPill", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 11.9);
+      tl.fromTo("#dShadow", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.8, ease: "power3.out" }, 11.85);
+      tl.fromTo("#dPhoto", { opacity: 0, x: -80, rotation: -7 }, { opacity: 1, x: 0, rotation: -3, duration: 0.9, ease: "power3.out" }, 11.85);
+      tl.fromTo("#dCard", { opacity: 0, y: 60, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" }, 12.1);
+      // cursor travels to the button and clicks (UI zoom in on the button)
+      tl.set("#cursor", { x: 1500, y: 930 }, 0);
+      tl.to("#cursor", { opacity: 1, duration: 0.2, ease: "none" }, 12.9);
+      tl.to("#cursor", { x: 1175, y: 705, duration: 0.7, ease: "power2.inOut" }, 12.9);
+      tl.to("#dWorld", { scale: 1.3, x: 960 - 1.3 * 1150, y: 540 - 1.3 * 700, duration: 0.7, ease: "power2.inOut" }, 12.9);
+      tl.to("#dBtn", { scale: 0.93, duration: 0.1, ease: "power1.in" }, 13.62);
+      tl.to("#dBtn", { scale: 1, duration: 0.25, ease: "back.out(2.5)" }, 13.72);
+      tl.fromTo("#dRing", { opacity: 0.9, scale: 0.4 }, { opacity: 0, scale: 2.6, duration: 0.7, ease: "power1.out" }, 13.62);
+
+      // ===== end card =====
+      tl.to("#end", { opacity: 1, duration: 0.4, ease: "none" }, 14.25);
+      tl.fromTo("#endLogo", { scale: 0.94 }, { scale: 1, duration: 0.75, ease: "power2.out" }, 14.25);
+      tl.fromTo("#endUrl", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 14.4);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
