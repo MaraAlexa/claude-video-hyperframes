@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; font-family: Inter, 'Helvetica Neue', Arial, 'Liberation Sans', 'DejaVu Sans', sans-serif; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #0b1026; }
+      #root {
+        position: relative; width: 1920px; height: 1080px; overflow: hidden;
+        font-family: Inter, 'Helvetica Neue', Arial, 'Liberation Sans', 'DejaVu Sans', sans-serif; color: #eef2ff;
+        background: radial-gradient(1200px 700px at 30% 55%, #1b2559 0%, #0b1026 70%);
+      }
+      #title { position: absolute; left: 0; top: 90px; width: 1920px; text-align: center;
+        font-size: 84px; font-weight: 700; letter-spacing: -0.03em; color: #eef2ff; }
+      #title span { color: #7dd3fc; }
+      #stars { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      .star { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #c7d2fe; opacity: 0.5; }
+      #batt { position: absolute; left: 170px; top: 380px; width: 780px; height: 360px;
+        border: 14px solid #c7d2fe; border-radius: 56px; }
+      #cap { position: absolute; left: 950px; top: 497px; width: 44px; height: 126px;
+        background: #c7d2fe; border-radius: 0 20px 20px 0; }
+      .fill { position: absolute; left: 170px; top: 380px; width: 780px; height: 360px;
+        border-radius: 56px; transform-origin: 0 50%; transform: scaleX(0); }
+      #fillLow { background: #fb7185; }
+      #fillHigh { background: linear-gradient(90deg, #38bdf8, #34d399); opacity: 0; }
+      #inner { position: absolute; left: 184px; top: 394px; width: 752px; height: 332px;
+        border-radius: 42px; overflow: hidden; }
+      #pct { position: absolute; left: 170px; top: 470px; width: 780px; text-align: center;
+        font-size: 150px; font-weight: 800; letter-spacing: -0.04em; color: #fff; -webkit-text-stroke: 12px #0b1026; paint-order: stroke fill; }
+      #moon { position: absolute; left: 475px; top: 270px; width: 120px; height: 120px; }
+      .chip { position: absolute; left: 1130px; width: 640px; height: 112px; border-radius: 28px;
+        background: rgba(125, 211, 252, 0.12); border: 2px solid rgba(125, 211, 252, 0.45);
+        display: flex; align-items: center; padding-left: 36px; font-size: 48px; font-weight: 600; opacity: 0; color: #eef2ff; }
+      .chip b { display: inline-block; width: 48px; height: 48px; margin-right: 28px; border-radius: 50%;
+        background: #34d399; color: #0b1026; font-size: 34px; line-height: 48px; text-align: center; }
+      #tag { position: absolute; left: 0; top: 880px; width: 1920px; text-align: center;
+        font-size: 72px; font-weight: 700; letter-spacing: -0.02em; opacity: 0; color: #eef2ff; }
+      #tag span { color: #34d399; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8" data-width="1920" data-height="1080">
+      <div id="stars"></div>
+      <h1 id="title">Sleep is your body’s <span>recharge</span></h1>
+
+      <svg id="moon" viewBox="0 0 100 100"><path d="M62 12a40 40 0 1 0 26 62A34 34 0 0 1 62 12z" fill="#fde68a"/></svg>
+      <div id="batt"></div><div id="cap"></div>
+      </div>
+      <div class="fill" id="fillLow" style="left:184px;top:394px;width:752px;height:332px;border-radius:42px"></div>
+      <div class="fill" id="fillHigh" style="left:184px;top:394px;width:752px;height:332px;border-radius:42px"></div>
+      <div id="pct">12%</div>
+
+      <div class="chip" id="c1" style="top:300px"><b>✓</b>Sharper memory</div>
+      <div class="chip" id="c2" style="top:440px"><b>✓</b>Better mood</div>
+      <div class="chip" id="c3" style="top:580px"><b>✓</b>Stronger immunity</div>
+      <div class="chip" id="c4" style="top:720px"><b>✓</b>Healthier heart</div>
+
+      <div id="tag">Sleep in. <span>Charge up.</span></div>
+    </div>
+    <script>
+      const stars = document.getElementById("stars");
+      for (let i = 0; i < 28; i++) {
+        const s = document.createElement("div");
+        s.className = "star";
+        s.style.left = ((i * 331) % 1900) + "px";
+        s.style.top = ((i * 197) % 700) + "px";
+        s.style.opacity = 0.25 + ((i * 7) % 5) / 10;
+        stars.appendChild(s);
+      }
+      const pct = document.getElementById("pct");
+      const state = { p: 12 };
+      const tl = gsap.timeline({ paused: true });
+      tl.from("#title", { opacity: 0, y: -30, duration: 0.6, ease: "power2.out" }, 0);
+      tl.from(["#batt", "#cap", "#moon", "#pct"], { opacity: 0, y: 30, duration: 0.6, ease: "power2.out" }, 0.3);
+      tl.set(["#fillLow", "#fillHigh"], { scaleX: 0.12 }, 0);
+      tl.to("#fillLow", { scaleX: 1, duration: 4.7, ease: "none" }, 1);
+      tl.to("#fillHigh", { scaleX: 1, duration: 4.7, ease: "none" }, 1);
+      tl.to("#fillHigh", { opacity: 1, duration: 2.5, ease: "none" }, 1);
+      tl.to(state, { p: 100, duration: 4.7, ease: "none",
+        onUpdate: () => { pct.textContent = Math.round(state.p) + "%"; } }, 1);
+      [["#c1", 2.0], ["#c2", 3.0], ["#c3", 4.0], ["#c4", 5.0]].forEach(([id, t]) =>
+        tl.fromTo(id, { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.5, ease: "back.out(1.6)" }, t));
+      tl.to("#batt", { scale: 1.03, duration: 0.3, yoyo: true, repeat: 1, transformOrigin: "50% 50%" }, 5.7);
+      tl.fromTo("#tag", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 6.3);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
