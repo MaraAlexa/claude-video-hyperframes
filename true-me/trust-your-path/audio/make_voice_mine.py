@@ -21,7 +21,9 @@ PAD_IN, PAD_OUT, PAUSE_CAP = 0.08, 0.12, 0.38
 rng = np.random.default_rng(5)
 t = np.arange(int(SR * 1.5)) / SR
 ir = rng.standard_normal(len(t)) * np.exp(-t * 3.4)
-ir = np.concatenate([np.zeros(int(.022 * SR)), ir]); ir /= np.sqrt((ir ** 2).sum())
+ir = np.concatenate([np.zeros(int(.022 * SR)), ir])
+for i in range(1, len(ir)): ir[i] = 0.55 * ir[i] + 0.45 * ir[i - 1]   # soften highs
+ir /= np.sqrt((ir ** 2).sum())
 def conv(a, b):
     n = len(a) + len(b) - 1; nf = 1 << (n - 1).bit_length()
     return np.fft.irfft(np.fft.rfft(a, nf) * np.fft.rfft(b, nf), nf)[:n]
@@ -44,14 +46,16 @@ for k, segs in LINES.items():
     sf.write("/tmp/claude-0/seg_in.wav", y, SR)
     # level up (take is very quiet), warm, gentle compression
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", "/tmp/claude-0/seg_in.wav", "-af",
-        "highpass=f=80,bass=g=2:f=190,treble=g=-2:f=4500,"
-        "acompressor=threshold=-34dB:ratio=2.6:attack=15:release=200:makeup=2",
+        "highpass=f=90,equalizer=f=300:t=q:w=1:g=-4,equalizer=f=1000:t=q:w=1.2:g=-2.5,"
+        "equalizer=f=2200:t=q:w=0.9:g=9,equalizer=f=3500:t=q:w=1:g=3,"
+        "aexciter=level_in=1:level_out=1:amount=0.8:drive=5:blend=0:freq=3500:ceil=10000,lowpass=f=8500,"
+        "acompressor=threshold=-30dB:ratio=2:attack=15:release=200:makeup=1.5",
         "/tmp/claude-0/seg_eq.wav"], check=True)
     y, _ = sf.read("/tmp/claude-0/seg_eq.wav")
     rms = np.sqrt((y ** 2).mean()); y = y * (0.115 / (rms + 1e-9))
     dry = np.concatenate([y, np.zeros(len(ir))])
     wet = conv(y, ir); wet = np.pad(wet, (0, max(0, len(dry) - len(wet))))[: len(dry)]
-    out = dry * 0.86 + wet * 0.28
+    out = dry * 0.9 + wet * 0.2
     n = int(.3 * SR); out[-n:] *= np.linspace(1, 0, n)
     out = np.clip(out, -0.95, 0.95)
     sf.write(f"me_{k}.wav", out, SR)
