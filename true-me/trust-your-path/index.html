@@ -85,13 +85,13 @@
       <div id="vig"></div>
       <div id="grain"></div>
       <audio id="music" src="audio/music_bright.mp3" data-start="0" data-duration="19" data-volume="0.42" data-fade-in="0.8" data-fade-out="2.2"></audio>
-      <audio id="vo_t1" src="audio/vo_t1.wav" data-start="0.25" data-duration="1.76" data-volume="1"></audio>
-      <audio id="vo_m1" src="audio/vo_m1.wav" data-start="3.45" data-duration="1.93" data-volume="1"></audio>
-      <audio id="vo_m2" src="audio/vo_m2.wav" data-start="5.45" data-duration="1.78" data-volume="1"></audio>
-      <audio id="vo_m3" src="audio/vo_m3.wav" data-start="7.55" data-duration="1.55" data-volume="1"></audio>
-      <audio id="vo_m4" src="audio/vo_m4.wav" data-start="9.45" data-duration="1.4" data-volume="1"></audio>
-      <audio id="vo_t3" src="audio/vo_t3.wav" data-start="11.35" data-duration="2.6" data-volume="1"></audio>
-      <audio id="vo_t4" src="audio/vo_t4.wav" data-start="15.75" data-duration="1.93" data-volume="1"></audio>
+      <audio id="vo_t1" src="audio/vo_t1.wav" data-start="0.25" data-duration="3.82" data-volume="1"></audio>
+      <audio id="vo_m1" src="audio/vo_m1.wav" data-start="3.15" data-duration="3.78" data-volume="1"></audio>
+      <audio id="vo_m2" src="audio/vo_m2.wav" data-start="5.75" data-duration="3.88" data-volume="1"></audio>
+      <audio id="vo_m3" src="audio/vo_m3.wav" data-start="8.45" data-duration="3.31" data-volume="1"></audio>
+      <audio id="vo_m4" src="audio/vo_m4.wav" data-start="10.55" data-duration="3.03" data-volume="1"></audio>
+      <audio id="vo_t3" src="audio/vo_t3.wav" data-start="12.45" data-duration="4.44" data-volume="1"></audio>
+      <audio id="vo_t4" src="audio/vo_t4.wav" data-start="15.85" data-duration="3.15" data-volume="1" data-fade-out="0.5"></audio>
     </div>
     <script>
       // ---- build the world (deterministic) ----
@@ -164,35 +164,36 @@
       const words = (sel) => Array.from(document.querySelectorAll(sel + " .w"));
 
       const tl = gsap.timeline({ paused: true });
+      const V = {"t1": {"s": 0.3, "d": 2.37}, "m1": {"s": 3.2, "d": 2.33}, "m2": {"s": 5.8, "d": 2.43}, "m3": {"s": 8.5, "d": 1.86}, "m4": {"s": 10.6, "d": 1.58}, "t3": {"s": 12.5, "d": 2.99}, "t4": {"s": 15.9, "d": 2.09}};
       const reveal = (sel, t, gap) => words(sel).forEach((w, i) =>
         tl.fromTo(w, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, t + i * gap));
       const hide = (sel, t) => tl.to(sel + " .w", { opacity: 0, duration: 0.35, ease: "none" }, t);
 
       // slow camera: lean in during the walk, ease back for the finale
-      tl.fromTo("#world", { scale: 1 }, { scale: 1.08, duration: 15.3, ease: "none", transformOrigin: "50% 72%" }, 0);
-      tl.to("#world", { scale: 1, duration: 3.7, ease: "sine.inOut", transformOrigin: "50% 72%" }, 15.3);
+      tl.fromTo("#world", { scale: 1 }, { scale: 1.08, duration: V.t4.s - 0.4, ease: "none", transformOrigin: "50% 72%" }, 0);
+      tl.to("#world", { scale: 1, duration: 19 - (V.t4.s - 0.4), ease: "sine.inOut", transformOrigin: "50% 72%" }, V.t4.s - 0.4);
 
       // ---- sky and water life ----
       S.forEach((d, i) => tl.to(d, { opacity: 0.12, duration: 1.2 + (i % 3) * 0.4, yoyo: true, repeat: 6, ease: "sine.inOut" }, (i % 6) * 0.3));
       tl.fromTo("#fogA", { x: -90 }, { x: 90, duration: 19, ease: "none" }, 0);
       tl.fromTo("#fogB", { x: 90 }, { x: -90, duration: 19, ease: "none" }, 0);
-      tl.to("#fogA", { opacity: 0.12, duration: 2.5, ease: "none" }, 10.8);
-      tl.to("#fogB", { opacity: 0.16, duration: 2.5, ease: "none" }, 10.8);
-      tl.to("#shore", { opacity: 1, duration: 2.2, ease: "none" }, 11.2);
+      tl.to("#fogA", { opacity: 0.12, duration: 2.5, ease: "none" }, V.t3.s - 0.6);
+      tl.to("#fogB", { opacity: 0.16, duration: 2.5, ease: "none" }, V.t3.s - 0.6);
+      tl.to("#shore", { opacity: 1, duration: 2.2, ease: "none" }, V.t3.s - 0.2);
       B.forEach((b) => {
         const mirror = b.host === "aurR";
         const tealIn = 3 + b.i * 2.2;
         if (b.cls === "teal") tl.fromTo(b.el, { opacity: 0 }, { opacity: 0.55, duration: 3, ease: "none" }, tealIn);
-        else tl.fromTo(b.el, { opacity: 0 }, { opacity: 0.6, duration: 2.6, ease: "none" }, 15.3);
+        else tl.fromTo(b.el, { opacity: 0 }, { opacity: 0.6, duration: 2.6, ease: "none" }, V.t4.s - 0.4);
         tl.fromTo(b.el, { x: b.i % 2 ? -50 : 50 }, { x: b.i % 2 ? 50 : -50, duration: 19, ease: "none" }, 0);
       });
 
       // ---- the walk: each stone lights up only as the step is taken ----
-      const stepAt = [0, 3.4, 5.4, 7.4, 9.4, 11.6, 13.0, 14.4];
+      const stepAt = [0, V.m1.s + 0.2, V.m2.s + 0.2, V.m3.s + 0.2, V.m4.s + 0.2, V.t3.s + 0.4, V.t3.s + 1.8, V.t4.s - 0.9];
       tl.fromTo(ST[0], { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power1.out" }, 0.3);
       ST.forEach((s, k) => {
         if (k > 0) tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power1.out" }, stepAt[k] - 1.0);
-        const left = (stepAt[k + 1] || 15.6) + 0.6;
+        const left = (stepAt[k + 1] || V.t4.s + 0.4) + 0.6;
         tl.to(s, { opacity: 0.55, duration: 0.9, ease: "none" }, left);
         const rt = k === 0 ? 0.5 : stepAt[k] - 1.0;
         tl.fromTo(RG[k], { opacity: 0.9, scale: 0.55 }, { opacity: 0, scale: 2.3, duration: 1.7, ease: "power1.out" }, rt);
@@ -209,13 +210,9 @@
       tl.fromTo("#pony", { rotation: -5 }, { rotation: 6, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 17, transformOrigin: "72px 30px" }, 0);
 
       // ---- the words (timed to the voiceover) ----
-      reveal("#t1", 0.3, 0.25);  hide("#t1", 2.85);
-      reveal("#m1", 3.5, 0.26);  hide("#m1", 5.45);
-      reveal("#m2", 5.5, 0.29);  hide("#m2", 7.3);
-      reveal("#m3", 7.6, 0.3);  hide("#m3", 9.3);
-      reveal("#m4", 9.5, 0.33);  hide("#m4", 11.0);
-      reveal("#t3", 11.4, 0.31); hide("#t3", 15.1);
-      reveal("#t4", 15.8, 0.27);
+      const R = (id, n) => { reveal("#" + id, V[id].s, (V[id].d - 0.5) / n); hide("#" + id, V[id].s + V[id].d + 0.15); };
+      R("t1", 7); R("m1", 7); R("m2", 6); R("m3", 5); R("m4", 4); R("t3", 8);
+      reveal("#t4", V.t4.s, (V.t4.d - 0.5) / 7);
 
       // ---- light motes rise as hope builds; gentle heartbeat in the edges ----
       M.forEach((m, i) => {
